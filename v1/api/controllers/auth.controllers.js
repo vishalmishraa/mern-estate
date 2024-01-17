@@ -13,6 +13,6 @@ export const signup = async (req, res, next) => {
         console.log(newUser);
         console.log("----------------------------");
     } catch (err) {
-        next(error);
+        next(err);
     }
 };
