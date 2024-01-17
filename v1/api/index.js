@@ -4,6 +4,7 @@ import express from 'express';
 const app = express();
 import mongoose from 'mongoose';
 import UserRoutes from './routes/user.routes.js'; 
+import authRoutes from './routes/auth.routes.js';
 
 
 /**************** MONGO DB CONNECTION *********************** */
@@ -20,7 +21,9 @@ let db = async () => {
 db();
 
 /* app uses */
+app.use(express.json());
 app.use('/api/user',UserRoutes);
+app.use('/api/auth',authRoutes);
 
 
 
