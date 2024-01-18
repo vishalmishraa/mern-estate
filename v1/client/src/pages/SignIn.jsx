@@ -1,13 +1,16 @@
 import {Link} from 'react-router-dom'
 import {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { signInStart , signInSuccess,signInFailure  } from '../redux/user/userSlice';
+
+
 
 export default function SignIp() {
     const [formData, setFormData] = useState({});
-    const [error , setError] = useState(null);//eslint-disable-line
-    const [loading , setLoading] = useState(false);
+    const {loading, error} = useSelector(state => state.user);
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
     const handleChange = (e) => {
         setFormData({
           ...formData, [e.target.id]: e.target.value
@@ -17,7 +20,7 @@ export default function SignIp() {
     const handleSubmit = async(e) => {
         e.preventDefault();
         try {
-          setLoading(true);
+          dispatch(signInStart());
           const res = await fetch('/api/auth/signin',{
             method: 'POST',
             headers: {
@@ -27,18 +30,15 @@ export default function SignIp() {
           });
           const data = await res.json();
           if(data.success === false){
-            setLoading(false);
-            setError(data.message);
+            dispatch(signInFailure(data.message));
             return;
           }
-          setLoading(false);
-          setError(null);
+          dispatch(signInSuccess(data));
           navigate('/');
           console.log(data);
           
         } catch (error) {
-          setLoading(false);
-          setError(error.message);
+          dispatch(signInFailure(error.message));
         }
     };
     
