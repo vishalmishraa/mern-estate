@@ -3,6 +3,7 @@ import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utilities/error.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 export const signup = async (req, res, next) => {
@@ -33,7 +34,7 @@ export const signin = async (req, res, next) => {
             return next(errorHandler(400, 'Wrong Credentials'));
         }
         //making token because user is valid and password is valid too and it needed because we need to send token to the client so that client can use it to access protected routes
-        const token = jwt.sign({id: validUser._id}, process.env.JWT_SECRET, {expiresIn: '1h'});
+        const token = jwt.sign({id: validUser._id}, process.env.JWT_SECRET);
         const {password: pass, ...user} = validUser._doc;//we are destructuring password from user object and storing it in pass variable and storing rest of the user object in user variable
         res  
             .cookie('access_token', token, {httpOnly: true})
@@ -47,3 +48,45 @@ export const signin = async (req, res, next) => {
         next(error);
     }
 };
+
+
+export const google = async (req, res, next) => {
+    console.log(req.body);
+    try {
+        const user = await User.findOne({email: req.body.email});
+        if(user){
+            const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
+            const {password: pass, ...rest} = user._doc;//we are destructuring password from user object and storing it in pass variable and storing rest of the user object in user variable
+            res  
+                .cookie('access_token', token, {httpOnly: true})
+                .status(200)
+                .json(rest);
+            console.log("------------USER LOGIN FROM GOOGLE----------------");
+            console.log(user);
+            console.log("----------------------------");
+        }else{
+            const generatedPassword = Math.random().toString(36).slice(-8)+Math.random().toString(36).slice(-8);
+            const hashedPassword = await bcryptjs.hash(generatedPassword, 10);
+            
+            const newUser = new User({
+                username: req.body.name.split(" ").join("").toLowerCase()+"_"+Math.random().toString(36).slice(-4),
+                email: req.body.email, password: hashedPassword , 
+                avatar: req.body.photo , google: true
+            });
+            await newUser.save();
+
+            //making token because user is valid and password is valid too and it needed because we need to send token to the client so that client can use it to access protected routes
+            const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET);
+            const {password: pass, ...rest} = newUser._doc;//we are destructuring password from user object and storing it in pass variable and storing rest of the user object in user variable
+            //res for sending token to the client
+            res  
+                .cookie('access_token', token, {httpOnly: true})
+                .status(200)
+                .json(rest);
+
+        }
+        
+    } catch (error) {
+        next(error);
+    }
+}

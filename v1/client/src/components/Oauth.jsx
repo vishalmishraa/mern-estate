@@ -1,11 +1,11 @@
 import React from 'react'//eslint-disable-line
 import { getAuth , GoogleAuthProvider,signInWithPopup} from 'firebase/auth';
-import { UseDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { signInSuccess } from '../redux/user/userSlice';
 import { app } from '../firebase';
 
 export default function Oauth() {
-    const dispatch = UseDispatch();
+    const dispatch = useDispatch();
     const handleGoogleClick = async() => {
         try {
             const provider = new GoogleAuthProvider();
