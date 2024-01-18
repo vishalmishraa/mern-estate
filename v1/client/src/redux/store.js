@@ -5,6 +5,9 @@ import storage from 'redux-persist/lib/storage';
 
 const rootReducer = combineReducers({ user: userReducer });
 
+//we defined the persist config here for the redux persist. 
+//where we define the key and the storage. 
+//so that it can store the data in the local storage.
 const persistConfig = {
   key: 'root',
   storage,
