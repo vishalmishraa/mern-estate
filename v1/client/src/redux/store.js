@@ -10,7 +10,8 @@ const persistConfig = {
   storage,
   version: 1,
 };
-
+//we use redux presist to store the user data in the local storage . 
+//using this we can access the user data even after the page is refreshed.
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
