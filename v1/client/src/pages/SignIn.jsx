@@ -7,7 +7,7 @@ import Oauth from '../components/Oauth';
 
 
 
-export default function SignIp() {
+export default function SignIn() {
     const [formData, setFormData] = useState({});
     const {loading, error} = useSelector(state => state.user);
     const navigate = useNavigate();
