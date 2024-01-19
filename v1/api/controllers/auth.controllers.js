@@ -51,7 +51,6 @@ export const signin = async (req, res, next) => {
 
 
 export const google = async (req, res, next) => {
-    console.log(req.body);
     try {
         const user = await User.findOne({email: req.body.email});
         if(user){
@@ -61,9 +60,6 @@ export const google = async (req, res, next) => {
                 .cookie('access_token', token, {httpOnly: true})
                 .status(200)
                 .json(rest);
-            console.log("------------USER LOGIN FROM GOOGLE----------------");
-            console.log(user);
-            console.log("----------------------------");
         }else{
             const generatedPassword = Math.random().toString(36).slice(-8)+Math.random().toString(36).slice(-8);
             const hashedPassword = await bcryptjs.hash(generatedPassword, 10);
