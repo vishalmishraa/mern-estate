@@ -19,9 +19,9 @@ export default function Profile() {
 
     console.log(file);
     useEffect(() => {
-        if(file){
+        
             handleFileUpload(file);
-        }
+        
         //eslint-disable-next-line
     }, [file]);
 
@@ -79,7 +79,21 @@ export default function Profile() {
        >profile</h1>
         <form action="" className='flex flex-col gap-4'>
             <input onChange={(e)=>setFile(e.target.files[0])} type="file" name="" id="" ref={fileRef} hidden accept="image/*"/>
-            <img onClick={()=> fileRef.current.click()} src={ currentUser.avatar } alt="profile"  className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'/>
+            <img onClick={()=> fileRef.current.click()} src={ formData.avatar ||  currentUser.avatar } alt="profile"  className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'/>
+            <p className='text-sm self-center'>
+                {
+                    
+                    fileUploadError ? (
+                        <span className='text-red-700'> Error Image Upload (Image must be less then 2 MB) </span> 
+                    ): fileprec > 0 && fileprec < 100 ? (
+                        <span className='text-slate-700'>{`Uploading ${fileprec}`}</span>
+                    ): fileprec === 100 ? (
+                        <span className='text-green-700'>Image Uploaded Sucessfully</span>
+                    ):(
+                        ''
+                    )
+                }
+            </p>
             <input  type="text" name="" id="username" placeholder='username' className='border p-3 rounded-lg' />
             <input type="email" name="" id="email" placeholder='email' className='border p-3 rounded-lg' />
             <input type="text" name="" id="password" placeholder='password' className='border p-3 rounded-lg' />
