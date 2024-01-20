@@ -37,7 +37,7 @@ export const signin = async (req, res, next) => {
         const token = jwt.sign({id: validUser._id}, process.env.JWT_SECRET);
         const {password: pass, ...user} = validUser._doc;//we are destructuring password from user object and storing it in pass variable and storing rest of the user object in user variable
         res  
-            .cookie('access_token', token, {httpOnly: true})
+            .cookie('access_token', token, {httpOnly: true}, {expires: new Date(Date.now() + 900000)})
             .status(200)
             .json(user);
         console.log("------------USER LOGIN----------------");
