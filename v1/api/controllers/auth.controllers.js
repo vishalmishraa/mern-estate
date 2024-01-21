@@ -7,6 +7,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const signup = async (req, res, next) => {
+    const logUser = req.cookies.access_token;
+    if(logUser){
+        return next(errorHandler(403, 'you are already logged in'));
+    }
     try {
         const { username, email, password } = req.body;
         const salt = await bcryptjs.genSalt(10);
@@ -23,6 +27,10 @@ export const signup = async (req, res, next) => {
 };
 
 export const signin = async (req, res, next) => {
+    const logUser = req.cookies.access_token;
+    if(logUser){
+        return next(errorHandler(403, 'you are already logged in'));
+    }
     const {email,password} = req.body;
     try {
         const validUser = await User.findOne({email});
@@ -51,6 +59,10 @@ export const signin = async (req, res, next) => {
 
 
 export const google = async (req, res, next) => {
+    const logUser = req.cookies.access_token;
+    if(logUser){
+        return next(errorHandler(403, 'you are already logged in'));
+    }
     try {
         const user = await User.findOne({email: req.body.email});
         if(user){
