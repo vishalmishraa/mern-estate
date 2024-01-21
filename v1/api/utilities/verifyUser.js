@@ -1,10 +1,9 @@
 import  jwt  from "jsonwebtoken";
 import { errorHandler } from "./error.js";
-import cookies from "cookie-parser";
 
 
 export const verifyToken = (req, res, next) => {
-    console.log(req.cookies);
+    
     const token = req.cookies.access_token;
 
     if (!token) {

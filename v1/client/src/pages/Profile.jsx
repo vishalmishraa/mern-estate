@@ -2,11 +2,13 @@ import { useRef, useState , useEffect } from 'react'
 import {useSelector} from 'react-redux' 
 import { getDownloadURL, getStorage , ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
+import { updateUserStart,updateUserFailure,updateUserSuccess } from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 
 
 export default function Profile() {
-    const {currentUser} = useSelector(state => state.user);
+    const {currentUser , error , loading} = useSelector(state => state.user);
     const fileRef = useRef(null);
     const [file, setFile] = useState(undefined);
     //eslint-disable-next-line
@@ -14,14 +16,13 @@ export default function Profile() {
     //eslint-disable-next-line
     const [fileUploadError, setFileUploadError] = useState(false);
     const [formData, setFormData] = useState({});
+    const [updateSuccess , setUpdateSuccess] = useState(false);
+    const dispatch = useDispatch();
 
 
 
-    console.log(file);
     useEffect(() => {
-        
             handleFileUpload(file);
-        
         //eslint-disable-next-line
     }, [file]);
 
@@ -49,6 +50,36 @@ export default function Profile() {
         }
     )}
 
+    const handleChange = async (e)=>{
+        setFormData({...formData, [e.target.id]:e.target.value});
+    }
+  
+
+    const handleSubmit = async (e)=>{
+        console.log("submit clicked");
+        e.preventDefault();
+        try {
+            dispatch(updateUserStart());
+            const res = await fetch(`/api/user/update/${currentUser._id || currentUser.data._id}`,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(formData)
+            });
+            const data = await res.json();  
+            if(data.success==false){
+                dispatch(updateUserFailure(data));
+                return;
+            }
+            console.log(data);
+            dispatch(updateUserSuccess(data));
+            setUpdateSuccess(true);
+        } catch (error) {
+            dispatch(updateUserFailure(error.message));
+        }
+    }
+    
     /*
         //FIREBASE STORAGE RULES
         // These rules grant access to a file in your Cloud Storage bucket
@@ -77,16 +108,20 @@ export default function Profile() {
        <h1 
         className="text-3xl font-semibold text-center my-7 "
        >profile</h1>
-        <form action="" className='flex flex-col gap-4'>
-            <input onChange={(e)=>setFile(e.target.files[0])} type="file" name="" id="" ref={fileRef} hidden accept="image/*"/>
-            <img onClick={()=> fileRef.current.click()} src={ formData.avatar ||  currentUser.avatar } alt="profile"  className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'/>
+        <form action="" onSubmit={handleSubmit} className='flex flex-col gap-4'>
+            <input onChange={(e)=>setFile(e.target.files[0])} type="file"  id="avatar" ref={fileRef} hidden accept="image/*"/>
+            <img 
+                onClick={()=> fileRef.current.click()} 
+                src={ formData.avatar ||  currentUser.avatar  || currentUser.data.avatar} 
+                alt="profile"  
+                className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'/>
             <p className='text-sm self-center'>
                 {
                     
                     fileUploadError ? (
                         <span className='text-red-700'> Error Image Upload (Image must be less then 2 MB) </span> 
                     ): fileprec > 0 && fileprec < 100 ? (
-                        <span className='text-slate-700'>{`Uploading ${fileprec}`}</span>
+                        <span className='text-slate-700'>{`Uploading ${fileprec}%`}</span>
                     ): fileprec === 100 ? (
                         <span className='text-green-700'>Image Uploaded Sucessfully</span>
                     ):(
@@ -94,15 +129,50 @@ export default function Profile() {
                     )
                 }
             </p>
-            <input  type="text" name="" id="username" placeholder='username' className='border p-3 rounded-lg' />
-            <input type="email" name="" id="email" placeholder='email' className='border p-3 rounded-lg' />
-            <input type="text" name="" id="password" placeholder='password' className='border p-3 rounded-lg' />
-            <button className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80 '>upate</button>
+            <input  
+                type="text"
+                defaultValue={formData.avatar || currentUser.username || currentUser.data.username} 
+                name="" 
+                id="username" 
+                placeholder='username' 
+                onChange={handleChange}
+                className='border p-3 rounded-lg' 
+            />
+           
+            <input 
+                type="email" 
+                defaultValue={formData.avatar || currentUser.email || currentUser.data.email } 
+                name="" 
+                id="email" 
+                placeholder='email' 
+                onChange={handleChange}
+                className='border p-3 rounded-lg' 
+            />
+            
+            <input type="password" 
+              
+                id="password"
+                placeholder='password'
+                onChange={handleChange}
+                className='border p-3 rounded-lg' 
+            />
+            
+            <button  
+                disabled={loading} 
+                className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80 '
+            >
+                {loading ? 'Loading...' : 'Update'}
+            </button>
         </form>
         <div className='text-red-700 cursor-pointer flex justify-between mt-5 '>
             <span>Delete Account</span>
             <span>Sign Out</span>
         </div>
+        <div className='flex justify-center'>
+            <span className='text-red-700'>{error ? error : ''}</span>
+            <span span className='text-green-700'>{updateSuccess ? 'User Updated Sucessfully' : ''}</span>
+        </div>
+
 
 
     </div>

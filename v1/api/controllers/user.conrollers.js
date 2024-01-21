@@ -10,13 +10,14 @@ export const test = (req,res)=>{
 } ;
 
 
-export const updateUser= async (req,res)=>{
+export const updateUser= async (req,res,next)=>{
+
     if(req.user.id !== req.params.id){
-        return next(errorHandler(403, 'Unauthorized'));
+        return next(errorHandler(403, 'you can only update your own account'));
     }
     try {
         if(req.body.password){
-            req.body.password = bcryptjs.hashSync(req.body.password, 8);
+            req.body.password = bcryptjs.hashSync(req.body.password, 10);
         }
 
         const updateUser = await User.findByIdAndUpdate(
@@ -43,6 +44,6 @@ export const updateUser= async (req,res)=>{
                 });
 
     } catch (error) {
-        
+       next(error);
     }
 }
