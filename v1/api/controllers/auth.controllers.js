@@ -58,6 +58,25 @@ export const signin = async (req, res, next) => {
 };
 
 
+export const signOut = async (req, res, next) => {
+    const logUser = req.cookies.access_token;
+    if(!logUser){
+        return next(errorHandler(403, 'you are not logged in'));
+    }
+    try {
+        res
+            .clearCookie('access_token')
+            .status(200)
+            .json({
+                success:true,
+                message:'user has been logged out'
+            });
+    } catch (error) {
+        next(error);
+    }
+
+}
+
 export const google = async (req, res, next) => {
     const logUser = req.cookies.access_token;
     if(logUser){
