@@ -2,7 +2,16 @@ import { useRef, useState , useEffect } from 'react'
 import {useSelector} from 'react-redux' 
 import { getDownloadURL, getStorage , ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
-import { updateUserStart,updateUserFailure,updateUserSuccess , deleteUserFailure,deleteUserStart,deleteUserSuccess ,signOutUserSuccess,signOutUserStart,signOutUserFailure} from '../redux/user/userSlice';
+import {    updateUserStart,
+            updateUserFailure,
+            updateUserSuccess , 
+            deleteUserFailure,
+            deleteUserStart,
+            deleteUserSuccess ,
+            signOutUserSuccess,
+            signOutUserStart,
+            signOutUserFailure
+       } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 
 
@@ -26,6 +35,29 @@ export default function Profile() {
         //eslint-disable-next-line
     }, [file]);
 
+        
+    /*  //FIREBASE STORAGE RULES
+        // These rules grant access to a file in your Cloud Storage bucket
+        // For more on Cloud Storage
+        // https://firebase.google.com/docs/storage/security
+        rules_version = '2';
+
+        // Craft rules based on data in your Firestore database
+        // allow write: if firestore.get(
+        //    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
+        service firebase.storage {
+            match /b/{bucket}/o {
+                match /{allPaths=**} {
+                    allow read;
+                    allow write: if 
+      						        request.resource.size < 2 * 1024 * 1024 &&
+                                    request.resource.contentType.matches('image/.*')
+                }
+            }
+        }
+    
+    */
+
     const handleFileUpload = async (file) => {
         const storage = getStorage(app);
         const fileName =new Date().getTime + file.name;
@@ -41,12 +73,15 @@ export default function Profile() {
         },
         //eslint-disable-next-line
         (error)=>{
+            
             setFileUploadError(true);
         },
         ()=>{
+            
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                 setFormData({...formData, avatar:downloadURL});
             });
+
         }
     )}
 
@@ -80,29 +115,6 @@ export default function Profile() {
         }
     }
     
-    /*
-        //FIREBASE STORAGE RULES
-        // These rules grant access to a file in your Cloud Storage bucket
-        // For more on Cloud Storage
-        // https://firebase.google.com/docs/storage/security
-        rules_version = '2';
-
-        // Craft rules based on data in your Firestore database
-        // allow write: if firestore.get(
-        //    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
-        service firebase.storage {
-            match /b/{bucket}/o {
-                match /{allPaths=**} {
-                    allow read;
-                    allow write: if 
-      						        request.resource.size < 2 * 1024 * 1024 &&
-                                    request.resource.contentType.matches('image/.*')
-                }
-            }
-        }
-    
-    */
-
     const handleDeleteUser = async ()=>{
         try {
             dispatch(deleteUserStart());
