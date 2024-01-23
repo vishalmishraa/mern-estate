@@ -5,6 +5,7 @@ const app = express();
 import mongoose from 'mongoose';
 import UserRoutes from './routes/user.routes.js'; 
 import authRoutes from './routes/auth.routes.js';
+import listingRoutes from './routes/listing.routes.js';
 import cookieParser from 'cookie-parser';
 
 
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/api/user',UserRoutes);
 app.use('/api/auth',authRoutes);
+app.use('/api/listing',listingRoutes);
 
 
 //************* midleware *************** */
