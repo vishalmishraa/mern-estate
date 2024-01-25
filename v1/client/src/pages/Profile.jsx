@@ -10,7 +10,7 @@ import {    updateUserStart,
             deleteUserSuccess ,
             signOutUserSuccess,
             signOutUserStart,
-            signOutUserFailure
+            signOutUserFailure,
        } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -20,15 +20,20 @@ import { Link } from 'react-router-dom';
 export default function Profile() {
     const {currentUser , error , loading} = useSelector(state => state.user);
     const fileRef = useRef(null);
-    const [file, setFile] = useState(undefined);
+    const [file, setFile] = useState({
+        name:''
+    });
     //eslint-disable-next-line
     const [fileprec, setFileprec] = useState(0);
     //eslint-disable-next-line
     const [fileUploadError, setFileUploadError] = useState(false);
     const [formData, setFormData] = useState({});
     const [updateSuccess , setUpdateSuccess] = useState(false);
+    const [showListingsError , setShowListingsError] = useState(false);
+    const [userListings , setUserListings] = useState({});    
     const dispatch = useDispatch();
-
+    console.log("_______" );
+    console.log( userListings);
 
 
     useEffect(() => {
@@ -60,36 +65,42 @@ export default function Profile() {
     */
 
     const handleFileUpload = async (file) => {
-        const storage = getStorage(app);
-        const fileName =new Date().getTime + file.name;
-        const storageRef = ref(storage, fileName);
-        const uploadTask = uploadBytesResumable(storageRef, file);//it is used to upload file to firebase storage 
-        uploadTask.on('state_changed', (snapshot) => {
-            // Observe state )change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            setFileprec(Math.round(progress));
-            
-        },
-        //eslint-disable-next-line
-        (error)=>{
-            
-            setFileUploadError(true);
-        },
-        ()=>{
-            
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                setFormData({...formData, avatar:downloadURL});
-            });
+        if(file.name !== ''){
+            const storage = getStorage(app);
+            const fileName =new Date().getTime + file.name;
+            const storageRef = ref(storage, fileName);
+            const uploadTask = uploadBytesResumable(storageRef, file);//it is used to upload file to firebase storage
+          
+            uploadTask.on('state_changed', (snapshot) => {
+                // Observe state )change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+               
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                setFileprec(Math.round(progress));
+               
+                
+            },
+            //eslint-disable-next-line
+            (error)=>{
+                setFileUploadError(true);
+            },
+            ()=>{
+                
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    setFormData({...formData, avatar:downloadURL});
+                });
+    
+            }
+        );
 
         }
-    )}
+
+    }
 
     const handleChange = async (e)=>{
         setFormData({...formData, [e.target.id]:e.target.value});
     }
-  
 
     const handleSubmit = async (e)=>{
         console.log("submit clicked");
@@ -158,6 +169,28 @@ export default function Profile() {
         }
     }
 
+    const showListings = async()=>{
+        try {
+            setShowListingsError(false);
+            const res = await fetch(`/api/user/listings/${currentUser._id || currentUser.data._id}`,{
+                method:'GET',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+            });
+            const data = await res.json();  
+            if(data.success==false){
+                setShowListingsError(true);
+                return;
+            }
+            console.log(data);
+            setUserListings(data);
+            setShowListingsError(false);
+            
+        } catch (error) {
+            setShowListingsError(true);
+        }
+    }
     return (
     <div className='p-3 max-w-lg mx-auto'>
        <h1 
@@ -218,21 +251,71 @@ export default function Profile() {
             >
                 {loading ? 'Loading...' : 'Update'}
             </button>
+
            <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95' to={'/create-listing'}>
                 Create Listing
            </Link>
         </form>
+        {
+                updateSuccess && (
+                    <span className='text-green-700 pt-3 mb-0 pb-0 flex justify-center'>Profile Updated Successfully</span>  
+                )
+
+            }
+
+            {
+                error && (
+                    <span className='text-red-700 flex justify-center'>{error ? error : ''}</span>
+                )
+            }
         <div className='text-red-700 cursor-pointer flex justify-between mt-5 '>
             <span onClick={handleDeleteUser}>Delete Account</span>
             <span  onClick={handleSignOut}>Sign Out</span>
         </div>
-        <div className='flex justify-center'>
-            <span className='text-red-700'>{error ? error : ''}</span>
-            <span span className='text-green-700'>{updateSuccess ? 'User Updated Sucessfully' : ''}</span>
-        </div>
 
+        <button onClick={showListings} className='text-green-700 w-full p-2  rounded-lg uppercase'>Show Listings</button>
+            <p>
+                {
+                    showListingsError && (
+                        <span className='text-red-700 mt-5'>Error Showing Listings</span>
+                    )
+                }
+            </p>
+     
+                {   userListings && 
+                    userListings.length > 0 &&
 
+                    <div className='flex flex-col gap-4'>
+                        <h1 className='text-center mt-7 text-2xl font-semibold'>Your Listings</h1>
 
+                    {    userListings.map((listing)=>(
+                            <div key={listing._id} 
+                                className="border rounded-lg p-3 flex justify-between items-center  gap-4"    
+                            >
+                                <Link to={`/listing/${listing._id}`}>
+                                    <img src={listing.imageUrls[0]} 
+                                        className="h-16 w-16 object-contain "
+                                    alt="" />
+                                </Link>
+                                <Link 
+                                    className='"text-slate-700 font-semibold flex-1 truncate'
+                                    to={`/listing/${listing._id}`}>
+                                    <p >
+                                    {listing.title}
+                                    </p>
+                                </Link>
+    
+                                <div className='flex flex-col item-center'>
+                                    <button className='text-red-700 uppercase'>Delete</button>
+                                    <button className='text-green-700 uppercase'>Edit</button>
+                                </div>
+                            </div>
+                        )) }
+
+                    </div>
+                    
+                }
+        
     </div>
    
   )
