@@ -32,8 +32,7 @@ export default function Profile() {
     const [showListingsError , setShowListingsError] = useState(false);
     const [userListings , setUserListings] = useState({});    
     const dispatch = useDispatch();
-    console.log("_______" );
-    console.log( userListings);
+
 
 
     useEffect(() => {
@@ -232,6 +231,7 @@ export default function Profile() {
                 defaultValue={formData.avatar || currentUser.email || currentUser.data.email } 
                 name="" 
                 id="email" 
+                disabled
                 placeholder='email' 
                 onChange={handleChange}
                 className='border p-3 rounded-lg' 
