@@ -7,6 +7,7 @@ import UserRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import listingRoutes from './routes/listing.routes.js';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
 
 /**************** MONGO DB CONNECTION *********************** */
@@ -23,11 +24,17 @@ let db = async () => {
 db();
 
 /* app uses */
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/user',UserRoutes);
 app.use('/api/auth',authRoutes);
 app.use('/api/listing',listingRoutes);
+app.use(express.static(path.join(path.resolve(), '/client/dist')));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(path.resolve(), '/client/dist/index.html'));
+})
 
 
 //************* midleware *************** */

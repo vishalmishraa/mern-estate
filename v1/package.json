@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon ./api/index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "npm i && npm --prefix ./client i && npm --prefix ./client run build && mv ./client/build ./public"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.1.0"
+    "mongoose": "^8.1.0",
+    "path": "^0.12.7"
   }
 }
