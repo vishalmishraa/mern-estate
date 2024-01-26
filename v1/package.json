@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon ./api/index.js",
     "start": "node index.js",
-    "build": "npm i && npm --prefix ./client i && npm --prefix ./client run build && mv ./client/build ./public"
+    "build": "npm i && npm --prefix ./client i && npm --prefix ./client run build "
   },
   "keywords": [],
   "author": "",
