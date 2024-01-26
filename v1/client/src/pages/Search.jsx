@@ -57,7 +57,7 @@ export default function Search() {
     };
 
     fetchListings();
-  }, [location.search]);
+  }, [location.search]);//eslint-disable-line
 
   const handleChange = (e) => {
     if (
