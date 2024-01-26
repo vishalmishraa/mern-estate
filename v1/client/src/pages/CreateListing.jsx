@@ -140,7 +140,7 @@ export default function CreateListing() {
         },
         body: JSON.stringify({
           ...formData,
-          userRef: currentUser._id,
+          userRef: currentUser._id ||  currentUser.data._id,
         }),
       });
       const data = await res.json();
@@ -152,7 +152,7 @@ export default function CreateListing() {
       if (data.success === false) {
         setError(data.message);
       }
-      navigate(`/listing/${data._id||data.data._id  }`);
+      navigate(`/listing/${data._id || data.data._id  }`);
     } catch (error) {
       setError(error.message);
       setLoading(false);
