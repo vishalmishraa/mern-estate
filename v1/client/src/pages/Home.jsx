@@ -4,7 +4,7 @@ import {Swiper , SwiperSlide} from 'swiper/react';
 import SwiperCore  from 'swiper';
 import { Navigation } from 'swiper/modules';
 import 'swiper/swiper-bundle.css';
-import ListingItem from '../components/Listingitem'; 
+import Listingitem from '../components/Listingitem'; 
 
 
 export default function Home() {
@@ -96,7 +96,7 @@ export default function Home() {
 
                 {
                   offerListings.map((listing) => (
-                    <ListingItem key={listing._id} listing={listing}></ListingItem>
+                    <Listingitem key={listing._id} listing={listing}></Listingitem>
                   ))
                 }
                 </div>
@@ -116,7 +116,7 @@ export default function Home() {
 
                 {
                   rentListings.map((listing) => (
-                    <ListingItem key={listing._id} listing={listing}></ListingItem>
+                    <Listingitem key={listing._id} listing={listing}></Listingitem>
                   ))
                 }
                 </div>
@@ -136,7 +136,7 @@ export default function Home() {
 
                 {
                   saleListings.map((listing) => (
-                    <ListingItem key={listing._id} listing={listing}></ListingItem>
+                    <Listingitem key={listing._id} listing={listing}></Listingitem>
                   ))
                 }
                 </div>
