@@ -109,8 +109,8 @@ export const getListings = async (req, res,next) => {
         }
 
         const searchTerm = req.query.searchTerm || '';
-        const sort = req.query.sortBy || 'createdAt';
-        const order = req.query.orderBy || 'desc';
+        const sort = req.query.sort || 'createdAt';
+        const order = req.query.order || 'desc';
 
         const listing =  await Listing.find({
             title: {$regex: searchTerm, $options: 'i'},//regex is builtin search function in mongodb . options i means case insensitive , it doesnt care about upper or lower case,
