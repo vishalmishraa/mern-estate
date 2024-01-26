@@ -215,7 +215,7 @@ export default function Profile() {
     <div className='p-3 max-w-lg mx-auto'>
        <h1 
         className="text-3xl font-semibold text-center my-7 "
-       >profile</h1>
+       >Your Profile</h1>
         <form action="" onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <input onChange={(e)=>setFile(e.target.files[0])} type="file"  id="avatar" ref={fileRef} hidden accept="image/*"/>
             <img 
