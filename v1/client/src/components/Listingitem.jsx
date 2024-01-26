@@ -1,6 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { MdLocationOn } from 'react-icons/md';
+import { FaBed , FaBath } from 'react-icons/fa';
 
 export default function ListingItem({ listing }) {/*eslint-disable-line*/
   return (
@@ -38,11 +39,13 @@ export default function ListingItem({ listing }) {/*eslint-disable-line*/
             )}
         </p>
           <div className='text-slate-700 flex gap-4'>
+            <FaBed/>
             <div className='font-bold text-xs'>
               {listing.bedrooms > 1/*eslint-disable-line*/
                 ? `${listing.bedrooms /*eslint-disable-line*/} beds `
                 : `${listing.bedrooms} bed ` /*eslint-disable-line*/}
             </div>
+            <FaBath></FaBath>
             <div className='font-bold text-xs'>
               {listing.bathrooms > 1/*eslint-disable-line*/
                 ? `${listing.bathrooms/*eslint-disable-line*/} baths `
