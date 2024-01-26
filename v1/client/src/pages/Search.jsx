@@ -133,7 +133,7 @@ export default function Search() {
         <form onSubmit={handleSubmit} className='flex flex-col gap-8'>
           <div className='flex items-center gap-2'>
             <label className='whitespace-nowrap font-semibold'>
-              Search Term:
+              Search Location:
             </label>
             <input
               type='text'
