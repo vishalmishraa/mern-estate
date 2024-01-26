@@ -1,9 +1,10 @@
-import { useEffect , useState } from "react"
+import { useEffect , useState  } from "react"
 import { useParams } from "react-router-dom";
 import {Swiper , SwiperSlide} from 'swiper/react';
 import SwiperCore from 'swiper'; 
 import {Navigation} from 'swiper/modules';
-import 'swiper/swiper-bundle.css' 
+import 'swiper/swiper-bundle.css'
+import { useSelector } from "react-redux"; 
 import {
     FaBath,
     FaBed,
@@ -12,15 +13,19 @@ import {
     FaParking,
     FaShare,
   } from 'react-icons/fa';
+import Contact from "../components/Contact";
+
 
 export default function Listing() {
     //useing swiper for image slider
     SwiperCore.use([Navigation]);
     const params = useParams();
+    const {currentUser} = useSelector(state => state.user);
     const [listing, setListing] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [contact , setContact] = useState(false);
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -58,7 +63,6 @@ export default function Listing() {
                         <SwiperSlide key={url}>
                             <div>
                             <img src={url} alt={listing.title} className="w-full h-96 object-cover"/>
-
                             </div>
                         </SwiperSlide>
                     ))}
@@ -135,6 +139,17 @@ export default function Listing() {
                     </span>
                     {listing.description}
                 </p>
+
+                {
+                    currentUser && listing.userRef !== currentUser._id && !contact &&(
+                        <button  
+                            onClick={() => setContact(true)}
+                        className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:optional-90">Contact Landloard</button>
+                    )
+                }
+                {
+                    contact && <Contact Listing={listing}></Contact>
+                }
                 </div>  
             </>
         )}
