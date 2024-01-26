@@ -44,7 +44,7 @@ export default function CreateListing() {
       setFormData(data);
     };
     fetchListing();
-  },[]);
+  },[]);//eslint-disable-next-line
   console.log(formData);
   const handleImageSubmit = () => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
