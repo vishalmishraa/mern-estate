@@ -1,4 +1,5 @@
 import Listing from '../models/listing.model.js';
+import { errorHandler } from '../utilities/error.js';
 
 
 export const createListing = async (req, res,next) => {
@@ -42,4 +43,26 @@ export const deleteListing = async (req, res,next) => {
         next(error);
     }
 
+}
+
+export const updateListing = async (req, res,next) => {
+    const listing = await Listing.findById(req.params.id);
+    if(!listing){
+        return next(new errorHandler(404,"Listing not found"));
+    }
+
+    if(req.user.id != listing.userRef){
+        return next(new errorHandler(401,"You are not authorized to update this listing"));
+    }
+
+    try {
+        const updatedListing =  await Listing.findByIdAndUpdate(req.params.id,req.body,{new:true});
+        return res.status(200).json({
+            success: true,
+            message : "Listing updated",
+            data: updatedListing
+        });
+    } catch (error) {
+        next(error);
+    }
 }
