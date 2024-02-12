@@ -1,18 +1,18 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {BrowserRouter , Routes,Route} from 'react-router-dom'
+import Header from './components/Header'
 import PrivateRoute, { UserLogedIn } from './components/PrivateRoute'
+
 import {
   Home,
   SignIn,
   About,
   Profile,
   SignUp,
-  Header,
-  UserLogedIn,
   CreateListing,
   UpdateListing,
   Listing,
   Search
-} from './pages/index.js';
+} from "./pages/index.js"
 
 export default function App() {
   return (
