@@ -87,7 +87,7 @@ export default function Home() {
             offerListings && offerListings.length > 0 && (
               <div>
                 <div className='my-2'>
-                  <h2 className='text-2xl font-semibold text-slate-600'>Recenet Offers :</h2>
+                  <h2 className='text-2xl font-semibold text-slate-600'>Recent Offers :</h2>
                   <Link className='text-sm text-blue-600 hover:underline' to={'/search?offer=true&'}>
                     Show more Offers...
                   </Link>
@@ -127,7 +127,7 @@ export default function Home() {
           saleListings && saleListings.length > 0 && (
               <div>
                 <div className='my-2'>
-                  <h2 className='text-2xl font-semibold text-slate-600'>Recenet places for sale :</h2>
+                  <h2 className='text-2xl font-semibold text-slate-600'>Recent places for sale :</h2>
                   <Link className='text-sm text-blue-600 hover:underline' to={'/search?offer=true&'}>
                     Show more Offers...
                   </Link>
